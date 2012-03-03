@@ -1,5 +1,3 @@
--- Host: localhost    Database: paste
-
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
@@ -12,13 +10,13 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `posts`
+-- Table structure for table `pastes`
 --
 
-DROP TABLE IF EXISTS `posts`;
+DROP TABLE IF EXISTS `pastes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `posts` (
+CREATE TABLE `pastes` (
   `ident` varchar(16) NOT NULL DEFAULT '',
   `date` datetime DEFAULT NULL,
   `text` mediumtext,
@@ -28,7 +26,14 @@ CREATE TABLE `posts` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `pastes`
+--
 
+LOCK TABLES `pastes` WRITE;
+/*!40000 ALTER TABLE `pastes` DISABLE KEYS */;
+/*!40000 ALTER TABLE `pastes` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -38,5 +43,3 @@ CREATE TABLE `posts` (
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2011-02-06 17:32:45

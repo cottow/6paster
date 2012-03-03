@@ -28,7 +28,7 @@ function do_cleanup()
 {
 	global $dbh;
 	
-	$stmt = $dbh->prepare("DELETE FROM `posts` WHERE `expires` < NOW()");
+	$stmt = $dbh->prepare("DELETE FROM `pastes` WHERE `expires` < NOW()");
 	$stmt->execute();
 }
 
@@ -59,7 +59,7 @@ function check_setup()
 	// sane config?
 	if( $config['limit_hour'] > $config['limit_day'] )
 	{
-		die('You should allow less posts per hour than per day, silly');
+		die('You should allow less pastes per hour than per day, silly');
 	}
 
 	// htaccess installed?
@@ -80,7 +80,7 @@ function show_post( $ident )
 {
 	global $dbh;
 
-	$stmt = $dbh->prepare("SELECT `text` FROM `posts` WHERE `ident` = ?");
+	$stmt = $dbh->prepare("SELECT `text` FROM `pastes` WHERE `ident` = ?");
 	if( !$stmt )
 	{
 		die( 'mysql error' );
@@ -152,7 +152,7 @@ function do_post()
 
 	// it's OK now, let's post it
 	$ident = generate_ident();
-	$stmt = $dbh->prepare("INSERT INTO `posts` SET `ident`= ?, `ip`=?, `date`=NOW(), `text`=?, `expires` = TIMESTAMPADD( SECOND, ?, NOW())");
+	$stmt = $dbh->prepare("INSERT INTO `pastes` SET `ident`= ?, `ip`=?, `date`=NOW(), `text`=?, `expires` = TIMESTAMPADD( SECOND, ?, NOW())");
 	$stmt->bind_param('sssi', $ident, $_SERVER['REMOTE_ADDR'], $_POST['content'], $ttl );
 	$stmt->execute();
 
@@ -175,7 +175,7 @@ function generate_ident()
 		{
 			$ident .= $set[rand(0, strlen($set))];
 		}
-		$stmt = $dbh->prepare("SELECT EXISTS ( SELECT * FROM `posts` WHERE `ident` = ? )");
+		$stmt = $dbh->prepare("SELECT EXISTS ( SELECT * FROM `pastes` WHERE `ident` = ? )");
 		$stmt->bind_param('s', $ident );
 		$stmt->execute();
 		$stmt->bind_result( $_exists );
@@ -204,7 +204,7 @@ function _limit_exceeded( $type, $limit )
 	if( !in_array( $type, array('DAY', 'HOUR')))
 		return true;
 
-	$stmt = $dbh->prepare("SELECT COUNT(*) FROM `posts` WHERE `ip`= ? AND TIMESTAMPDIFF( $type, NOW(), `date` ) <= 1");
+	$stmt = $dbh->prepare("SELECT COUNT(*) FROM `pastes` WHERE `ip`= ? AND TIMESTAMPDIFF( $type, NOW(), `date` ) <= 1");
 	if( !$stmt )
 	{
 		die("Couldn't perform throttle check");
