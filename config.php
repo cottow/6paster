@@ -1,0 +1,16 @@
+<?php
+$config['page_title'] = '6paster';
+
+$config['mysql_host'] = 'localhost';
+$config['mysql_user'] = 'paster';
+$config['mysql_pass'] = 'samplepass';
+$config['mysql_db']   = 'paste';
+
+$config['limit_hour']	= 60;			// throttle posts per hour
+$config['limit_day']	= 100;			// throttle posts per day
+
+$config['ttl_min'] 	= 3600;			// minimum lifetime is 1 hour
+$config['ttl_max']	= 3600*24*30;		// maximum ttl is 30 days
+
+$config['post_max_chars'] = 1024*20;		// size limit in characters
+

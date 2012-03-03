@@ -1,0 +1,14 @@
+6core.net paster
+
+A small private pastebin for the privacy-conscious folks out there.
+
+Copy the stuff in webroot/ to the webroot (don't forget the .htaccess)
+and the config.php and tlp dir to the dir above the webroot.
+
+Update config.php to reflect your settings.
+
+Import db.sql into a mysql database.
+
+Go!
+
+
