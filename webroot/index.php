@@ -68,6 +68,11 @@ function check_setup()
 		die('You should install the included .htaccess file in the same dir as index.php');
 	}
 
+    if( !function_exists( 'mysqli_connect' ) )
+    {
+        die('You do not have mysqli installed, quitting.');
+    }
+
 	return true;
 }
 
@@ -113,7 +118,6 @@ function do_post()
 	global $dbh;
 	global $config;
 
-
 	require(TPLDIR.'header.php');
 
 	if( empty( $_POST['content'] ) || empty( $_POST['ttl'] ))
@@ -152,9 +156,10 @@ function do_post()
 	$stmt->bind_param('sssi', $ident, $_SERVER['REMOTE_ADDR'], $_POST['content'], $ttl );
 	$stmt->execute();
 
+    ob_end_clean();
+
 	header("Location: ".BASEURL."p/".$ident);
 
-	require( TPLDIR.'footer.php');
 }
 
 function generate_ident()
