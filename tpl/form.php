@@ -4,7 +4,7 @@
 	Enter the text you want to share 
 	</h1>
 	<h2>
-	(<?=htmlspecialchars($config['post_max_chars']/1024)?>k chars max)
+	(<?=htmlspecialchars($config['paste_max_chars']/1024)?>k chars max)
 	</h2>
 	<textarea name="content" rows="30" cols="82" ></textarea><br/>
 	Time to live: <select name="ttl">

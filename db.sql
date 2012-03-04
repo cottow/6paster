@@ -19,7 +19,8 @@ DROP TABLE IF EXISTS `pastes`;
 CREATE TABLE `pastes` (
   `ident` varchar(16) NOT NULL DEFAULT '',
   `date` datetime DEFAULT NULL,
-  `text` mediumtext,
+  `text` mediumblob,
+  `mimetype` varchar(255) DEFAULT NULL,
   `ip` varchar(255) DEFAULT NULL,
   `expires` datetime DEFAULT NULL,
   PRIMARY KEY (`ident`)

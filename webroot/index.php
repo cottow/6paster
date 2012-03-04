@@ -24,6 +24,13 @@ define('BASEURL', $base );
 
 require(CONFIG);
 
+$allowed_image_types = array( 
+    IMAGETYPE_GIF, 
+    IMAGETYPE_JPEG, 
+    IMAGETYPE_PNG, 
+    IMAGETYPE_BMP
+);
+
 function do_cleanup()
 {
 	global $dbh;
@@ -51,7 +58,7 @@ function check_setup()
 	// check SSL
 	if( !array_key_exists('HTTPS', $_SERVER) || $_SERVER['HTTPS'] != "on")
 	{
-		die('I really like encryption. Please use SSL.');
+		//die('I really like encryption. Please use SSL.');
 	} else {
 		header("Strict-Transport-Security: max-age=15768000;");
 	}
@@ -80,7 +87,7 @@ function show_post( $ident )
 {
 	global $dbh;
 
-	$stmt = $dbh->prepare("SELECT `text` FROM `pastes` WHERE `ident` = ?");
+	$stmt = $dbh->prepare("SELECT `text`,`mimetype` FROM `pastes` WHERE `ident` = ?");
 	if( !$stmt )
 	{
 		die( 'mysql error' );
@@ -89,12 +96,28 @@ function show_post( $ident )
 	$stmt->bind_param('s', $ident );
 	$stmt->execute();
 	$stmt->store_result();
-	$stmt->bind_result( $content );
-
+	$stmt->bind_result( $content, $mime_type );
+    
 	if( $stmt->num_rows == 1 )
 	{
 		$stmt->fetch();
-		header("Content-Type: text/plain; charset=utf-8");
+        // make sure we don't put newlines in headers
+        $mime_type = str_replace("\n", '', $mime_type );
+
+        // fix the charset
+        if( $mime_type == 'text/plain' )
+        {
+            // charset is hardcoded in the db
+            $mime_type .= '; charset=utf-8';
+        } else {
+            // yes, I'm positively paranoid
+            if( strpos($mime_type,'image') !== 0 )
+            {
+                return;
+            }
+        }
+
+		header("Content-Type: $mime_type");
 		require(TPLDIR.'post.php');
 		return;
 	}
@@ -113,10 +136,11 @@ function show_form()
 	require( TPLDIR.'footer.php');
 }
 
-function do_post()
+function do_paste()
 {
 	global $dbh;
 	global $config;
+    global $allowed_image_types;
 
 	require(TPLDIR.'header.php');
 
@@ -127,9 +151,9 @@ function do_post()
 		return;
 	}
 
-	if( strlen( $_POST['content']) > $config['post_max_chars'] )
+	if( strlen( $_POST['content']) > $config['paste_max_chars'] )
 	{
-		$errmsg = "Your post exceeds the max limit of ".$config['post_max_chars'];
+		$errmsg = "Your paste exceeds the max limit of ".$config['paste_max_chars'];
 		require( TPLDIR.'error.php');
 		return;
 	}
@@ -149,15 +173,39 @@ function do_post()
 		require( TPLDIR.'error.php');
 		return;
 	}
+   
+    $mime_type = 'text/plain';
+
+    // check if it's binary or a string
+    if(!mb_detect_encoding($_POST['content']))
+    {
+        // binary. is it an image?
+        $tmp_filename = tempnam(0, "6paster_");
+        $fh = fopen( $tmp_filename, "w");
+        fwrite( $fh, $_POST['content'] );
+        fclose( $fh );
+
+        $filetype = exif_imagetype( $tmp_filename );
+        unlink( $tmp_filename );
+
+        if( !$filetype || !in_array( $filetype, $allowed_image_types) )
+        {
+            $errmsg = "Sorry, this isn't a file sharing service. Filetype ".$filetype." not allowed.";
+            require( TPLDIR.'error.php');
+            return;
+        }
+        
+        $mime_type = image_type_to_mime_type( $filetype );
+
+    }
+    ob_end_clean();
 
 	// it's OK now, let's post it
 	$ident = generate_ident();
-	$stmt = $dbh->prepare("INSERT INTO `pastes` SET `ident`= ?, `ip`=?, `date`=NOW(), `text`=?, `expires` = TIMESTAMPADD( SECOND, ?, NOW())");
-	$stmt->bind_param('sssi', $ident, $_SERVER['REMOTE_ADDR'], $_POST['content'], $ttl );
+	$stmt = $dbh->prepare("INSERT INTO `pastes` SET `ident`= ?, `ip`=?, `date`=NOW(), `text`=?, `mimetype`=?, `expires` = TIMESTAMPADD( SECOND, ?, NOW())");
+	$stmt->bind_param('ssssi', $ident, $_SERVER['REMOTE_ADDR'], $_POST['content'], $mime_type, $ttl );
 	$stmt->execute();
-
-    ob_end_clean();
-
+    
 	header("Location: ".BASEURL."p/".$ident);
 
 }
@@ -244,7 +292,7 @@ if( $ident )
 {
 	show_post( $ident );
 } else if( array_key_exists( 'content', $_POST ) ) {
-	do_post();
+	do_paste();
 } else {
 	show_form();
 }
