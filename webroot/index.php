@@ -58,7 +58,7 @@ function check_setup()
 	// check SSL
 	if( !array_key_exists('HTTPS', $_SERVER) || $_SERVER['HTTPS'] != "on")
 	{
-		//die('I really like encryption. Please use SSL.');
+		die('I really like encryption. Please use SSL.');
 	} else {
 		header("Strict-Transport-Security: max-age=15768000;");
 	}
