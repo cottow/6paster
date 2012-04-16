@@ -134,6 +134,7 @@ function show_post( $ident )
         }
 
 		header("Content-Type: $mime_type");
+        header("Vary: User-Agent");
 		require(TPLDIR.'post.php');
 		return;
 	}
