@@ -109,6 +109,22 @@ function show_post( $ident )
         {
             // charset is hardcoded in the db
             $mime_type .= '; charset=utf-8';
+
+            // need some special tricks for Internet Explorer
+            if( preg_match("/MSIE (\d)/", $_SERVER['HTTP_USER_AGENT'], $matches) )
+            {   
+                // MS IE
+                if( (int)$matches[1] < 8 ) 
+                {   
+                    // MS IE < 8 is retarded and will parse text as html even if 
+                    // content-type says text/plain
+                    $content = htmlspecialchars($content);
+                } else {
+                    // MS IE >= 8 is retarded and needs this header to prevent 
+                    // parsing html in text/plain
+                    header("X-Content-Type-Options: nosniff");
+                }   
+            }  
         } else {
             // yes, I'm positively paranoid
             if( strpos($mime_type,'image') !== 0 )
