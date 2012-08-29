@@ -52,7 +52,7 @@ function check_setup()
 	// check gpc_quotes
 	if( get_magic_quotes_gpc() )
 	{
-		die('magci_quotes_gpc is enabled. I can\'t work like this.');
+		die('magic_quotes_gpc is enabled. I can\'t work like this.');
 	}
 
 	// check SSL
