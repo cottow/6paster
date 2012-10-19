@@ -12,6 +12,6 @@ $config['limit_day']    = 100;          // throttle pastes per day
 $config['ttl_min']  = 3600;         // minimum lifetime is 1 hour
 $config['ttl_max']  = 3600*24*30;       // maximum ttl is 30 days
 
-$config['paste_max_chars'] = 1024*20;        // size limit in characters
+$config['paste_max_chars'] = 1024*300;        // size limit in characters
 
 
