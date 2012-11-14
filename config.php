@@ -14,4 +14,5 @@ $config['ttl_max']  = 3600*24*30;       // maximum ttl is 30 days
 
 $config['paste_max_chars'] = 1024*300;        // size limit in characters
 
+$config['server_name'] = 'https://p.6core.net/'; // server url
 
