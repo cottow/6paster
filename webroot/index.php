@@ -69,6 +69,12 @@ function check_setup()
 		die('You should allow less pastes per hour than per day, silly');
 	}
 
+	// 
+	if( empty($config['server_name']) )
+	{
+		$config['server_name'] = 'https://p.6core.net';
+	}
+
 	// htaccess installed?
 	if( !file_exists('.htaccess'))
 	{
