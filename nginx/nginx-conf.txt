@@ -1,6 +1,5 @@
-6paster NGINX Server Configuration - info: sam@arahant.net
-
-Add the configuration below to your 'nginx.conf' and reload the server:
+6paster NGINX Server Configuration
+----------------------------------
 
 server {
 
