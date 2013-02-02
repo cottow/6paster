@@ -7,3 +7,7 @@ $HTTP["host"] =~ "^your\.server\.name$" {
   server.errorlog = "<log-directory-path>/<your>-error.log"
   accesslog.filename = "<log-directory-path>/<your>-access.log"
 }
+
+- 6paster works on https only. Please add https support to your webserver.
+
+

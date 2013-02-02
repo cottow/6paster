@@ -29,3 +29,4 @@ server {
 }
 
 
+- 6paster works on https only. Please add https support to your webserver.
