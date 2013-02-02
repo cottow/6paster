@@ -1,6 +1,6 @@
 INSTALL
 
-- Configure your Lighttpd web server with PHP FastCGI support.
+- Configure your Lighttpd web server with PHP FastCGI and OpenSSL support - 6paster requires HTTPS to work.
 
 - Add the server configuration example that you find at 'nginx/lighttpd-conf.txt' to your Lighttpd configuration file.
 

@@ -1,6 +1,6 @@
 INSTALL
 
-- Configure your NGINX web server with PHP FastCGI support.
+- Configure your NGINX web server with PHP FastCGI and OpenSSL support - 6paster requires HTTPS to work.
 
 - Add the server configuration example that you find at 'nginx/nginx-conf.txt' to your NGINX configuration file.
 
