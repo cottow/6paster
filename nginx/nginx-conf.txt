@@ -1,6 +1,5 @@
-6paster NGINX Server Configuration - info: sam@arahant.net
-
-Add the configuration below to your 'nginx.conf' and reload the server:
+6paster NGINX Server Configuration
+----------------------------------
 
 server {
 
@@ -14,7 +13,7 @@ server {
 
         location /p {
         	rewrite ^/p/([a-z0-9]+)/?$ /index.php?p=$1 break;
-                fastcgi_pass   <127.0.0.1:9000> OR </tmp/php-socket>;
+                fastcgi_pass   <fastcgi_socket>; # example: 127.0.0.1:9000 or /tmp/php-socket
                 fastcgi_index  index.php;
                 fastcgi_param  SCRIPT_FILENAME  <www-document-root>/webroot$fastcgi_script_name;
                 include        fastcgi_params;
@@ -22,7 +21,7 @@ server {
         }
 
         location ~ \.php$ {
-                fastcgi_pass   <127.0.0.1:9000> OR </tmp/php-socket>;
+                fastcgi_pass   <fastcgi_socket>; # example: 127.0.0.1:9000 or /tmp/php-socket
                 fastcgi_index  index.php;
                 fastcgi_param  SCRIPT_FILENAME  <www-document-root>/webroot$fastcgi_script_name;
                 include        fastcgi_params;
