@@ -1,0 +1,9 @@
+6paster Lighttpd Server Configuration
+-------------------------------------
+
+$HTTP["host"] =~ "^your\.server\.name$" {
+  server.document-root = "<www-document-root>/webroot"
+  url.rewrite-once = ( "^/p/([a-z0-9]+)/?$" => "/index.php?p=$1" )
+  server.errorlog = "<log-directory-path>/<your>-error.log"
+  accesslog.filename = "<log-directory-path>/<your>-access.log"
+}
