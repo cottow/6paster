@@ -34,7 +34,7 @@ $allowed_image_types = array(
 function do_cleanup()
 {
 	global $dbh;
-	
+
 	$stmt = $dbh->prepare("DELETE FROM `pastes` WHERE `expires` < NOW()");
 	$stmt->execute();
 }
@@ -62,7 +62,7 @@ function check_setup()
 	} else {
 		header("Strict-Transport-Security: max-age=15768000;");
 	}
-	
+
 	// sane config?
 	if( $config['limit_hour'] > $config['limit_day'] )
 	{
@@ -182,7 +182,7 @@ function do_paste()
 	}
 
 	$ttl = intval( $_POST['ttl'] );
-	
+
 	if( $ttl < $config['ttl_min'] )
 	{
 		$ttl = $config['ttl_min'];
@@ -320,5 +320,3 @@ if( $ident )
 } else {
 	show_form();
 }
-
-
