@@ -34,7 +34,7 @@ $allowed_image_types = array(
 function do_cleanup()
 {
 	global $dbh;
-	
+
 	$stmt = $dbh->prepare("DELETE FROM `pastes` WHERE `expires` < NOW()");
 	$stmt->execute();
 }
@@ -62,7 +62,7 @@ function check_setup()
 	} else {
 		header("Strict-Transport-Security: max-age=15768000;");
 	}
-	
+
 	// sane config?
 	if( $config['limit_hour'] > $config['limit_day'] )
 	{
@@ -76,7 +76,7 @@ function check_setup()
 	}
 
 	// htaccess installed?
-	if( !file_exists('.htaccess'))
+	if( stristr($_SERVER['SERVER_SOFTWARE'], 'apache' ) && !file_exists('.htaccess'))
 	{
 		die('You should install the included .htaccess file in the same dir as index.php');
 	}
@@ -182,7 +182,7 @@ function do_paste()
 	}
 
 	$ttl = intval( $_POST['ttl'] );
-	
+
 	if( $ttl < $config['ttl_min'] )
 	{
 		$ttl = $config['ttl_min'];
@@ -235,17 +235,18 @@ function do_paste()
 
 function generate_ident()
 {
-	global $dbh;
+	global $dbh, $config;
 
 	$exists = true;
 	while( $exists )
 	{
-		$set = 'abcdefghijklmnopqrstuvwxyz0123456789';
-		$ident = '';
-		for( $i=0; $i<16; $i++)
-		{
-			$ident .= $set[rand(0, strlen($set))];
-		}
+        // generate identifier. must have enough entropy (so rand()) but since we can't trust php's
+        // rand, we hash it together with a site-specific secret. then to compress the url, we base64
+        // encode instead of hex encode the result. Furthermore, + and / might give trouble in GET
+        // parameters, so we replace those.
+        $ident = substr( base64_encode( sha1 ( rand(0,10000000000) . $config['mysql_pass'], true ) ) , 0, 24 );
+        $ident = str_replace( '+', 'A', $ident );
+        $ident = str_replace( '/', 'B', $ident );
 		$stmt = $dbh->prepare("SELECT EXISTS ( SELECT * FROM `pastes` WHERE `ident` = ? )");
 		$stmt->bind_param('s', $ident );
 		$stmt->execute();
@@ -319,5 +320,3 @@ if( $ident )
 } else {
 	show_form();
 }
-
-
