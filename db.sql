@@ -17,7 +17,7 @@ DROP TABLE IF EXISTS `pastes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `pastes` (
-  `ident` varchar(16) NOT NULL DEFAULT '',
+  `ident` varchar(32) NOT NULL DEFAULT '',
   `date` datetime DEFAULT NULL,
   `text` mediumblob,
   `mimetype` varchar(255) DEFAULT NULL,
