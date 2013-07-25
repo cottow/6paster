@@ -6,8 +6,9 @@ server {
         listen        80;
         server_name   <your.server.name>;
 
+        root <www-document-root>/webroot;
+
         location / {
-                root <www-document-root>/webroot;
                 index index.html index.htm index.php;
         }
 

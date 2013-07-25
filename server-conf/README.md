@@ -14,7 +14,7 @@ NGINX INSTALL
 
 - Add the server configuration example that you find at 'nginx/nginx-conf.txt' to your NGINX configuration file.
 
-- Copy the 'nginx/index.php' to the 'webroot/' directory of your 6paster installation.
+- Copy the 'webroot/index.php' to the 'webroot/' directory of your 6paster installation.
 
 - Reload the NGINX process.
 
