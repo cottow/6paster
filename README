@@ -20,6 +20,9 @@ Paste from STDIN:
 
     ~$ echo "hi" | 6p
 
+Paste from here document:
+    ~$ cat << EOF | 6p
+
 The oneliner for in your .bash_profile:
 
     6p() { curl -s -F "content=<${1--}" -F ttl=604800 -w "%{redirect_url}\n" -o

@@ -17,7 +17,7 @@
 	<br/>
 	<input value="Save" type="submit"/>
 	<div class="text">
-	Hint: put the following oneliner in your .bashrc to use "6p &lt;file&gt;" or "echo hi | 6p" (thanks, Habbie and Reinhart):<br><br>
+	Hint: put the following oneliner in your .bashrc to use "6p &lt;file&gt;" or "echo hi | 6p" or "cat << EOF | 6p" (thanks, Habbie and Reinhart):<br><br>
 	<code>6p() { curl -s -F "content=<${1--}" -F ttl=604800 -w "%{redirect_url}\n" -o /dev/null <?=htmlspecialchars($config['server_name'])?> }</code>
 	</div>
 </form>
