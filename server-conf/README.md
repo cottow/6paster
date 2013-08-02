@@ -2,9 +2,7 @@ LIGHTTPD INSTALL
 
 - Configure your Lighttpd web server with PHP FastCGI and OpenSSL support - 6paster requires HTTPS to work.
 
-- Add the server configuration example that you find at 'lighttpd/lighttpd-conf.txt' to your Lighttpd configuration file.
-
-- Copy the 'lighttpd/index.php' to the 'webroot/' directory of your 6paster installation.
+- Add the server configuration example that you find at 'server-conf/lighttpd-conf.txt' to your Lighttpd configuration file.
 
 - Reload the Lighttpd process.
 
@@ -12,9 +10,7 @@ NGINX INSTALL
 
 - Configure your NGINX web server with PHP FastCGI and OpenSSL support - 6paster requires HTTPS to work.
 
-- Add the server configuration example that you find at 'nginx/nginx-conf.txt' to your NGINX configuration file.
-
-- Copy the 'webroot/index.php' to the 'webroot/' directory of your 6paster installation.
+- Add the server configuration example that you find at 'server-conf/nginx-conf.txt' to your NGINX configuration file.
 
 - Reload the NGINX process.
 
