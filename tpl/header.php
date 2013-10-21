@@ -14,7 +14,7 @@ body {
 
 textarea {
 	border: 1px solid #000000;
-	font-famliy: "Courier New", "Courier", monospace;
+	font-family: "Courier New", "Courier", monospace;
 }
 
 input {
