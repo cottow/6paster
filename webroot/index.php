@@ -11,6 +11,8 @@ the use of HTTPS, and imposes rate limits on posters.
 
 ob_start();
 
+header("Strict-Transport-Security: max-age=31536000"); // 1 year
+
 define('CONFIG', '../config.php');
 define('TPLDIR','../tpl/');
 
