@@ -304,8 +304,6 @@ if( !$dbh )
 
 $ident = false;
 
-do_cleanup();
-
 if( array_key_exists( 'p', $_GET ) && ctype_alnum( $_GET['p'] ) )
 {
 	$ident = $_GET['p'];
@@ -320,4 +318,6 @@ if( $ident )
 	show_form();
 }
 
+flush();
 
+do_cleanup();
