@@ -10,14 +10,14 @@
 	Time to live: <select name="ttl">
 	<option value="3600">1 hour</option>
 	<option value="14400">4 hours</option>
-	<option value="86400" selected>1 day</option>
+	<option value="86400" selected="selected">1 day</option>
 	<option value="604800">1 week</option>
 	<option value="2592000">30 days</option>
 	</select>
 	<br/>
 	<input value="Save" type="submit"/>
 	<div class="text">
-	Hint: put the following oneliner in your .bashrc to use "6p &lt;file&gt;" or "echo hi | 6p" or "cat << EOF | 6p" (thanks, Habbie and Reinhart):<br><br>
-	<code>6p() { curl -s -F "content=<${1--}" -F ttl=604800 -w "%{redirect_url}\n" -o /dev/null <?=htmlspecialchars($config['server_name'])?>; }</code>
+	Hint: put the following oneliner in your .bashrc to use "6p &lt;file&gt;" or "echo hi | 6p" or "cat &lt;&lt; EOF | 6p" (thanks, Habbie and Reinhart):<br /><br />
+	<code>6p() { curl -s -F "content=&lt;${1--}" -F ttl=604800 -w "%{redirect_url}\n" -o /dev/null <?=htmlspecialchars($config['server_name'])?>; }</code>
 	</div>
 </form>
