@@ -68,7 +68,7 @@ function check_setup()
 	// sane config?
 	if( $config['limit_hour'] > $config['limit_day'] )
 	{
-		die('You should allow less pastes per hour than per day, silly');
+		die('You should allow fewer pastes per hour than per day, silly');
 	}
 
 	// 
