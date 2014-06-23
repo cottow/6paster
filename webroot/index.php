@@ -9,8 +9,6 @@ the use of HTTPS, and imposes rate limits on posters.
 
 */
 
-ob_start();
-
 header("Strict-Transport-Security: max-age=31536000"); // 1 year
 
 define('CONFIG', '../config.php');
@@ -223,7 +221,6 @@ function do_paste()
         $mime_type = image_type_to_mime_type( $filetype );
 
     }
-    ob_end_clean();
 
 	// it's OK now, let's post it
 	$ident = generate_ident();
@@ -307,8 +304,6 @@ if( !$dbh )
 
 $ident = false;
 
-do_cleanup();
-
 if( array_key_exists( 'p', $_GET ) && ctype_alnum( $_GET['p'] ) )
 {
 	$ident = $_GET['p'];
@@ -323,4 +318,6 @@ if( $ident )
 	show_form();
 }
 
+flush();
 
+do_cleanup();
