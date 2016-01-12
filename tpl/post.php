@@ -1,5 +1,5 @@
 <?php
-if (substr($content, 0, 5) == '<?php')
+if (isset($_GET['smart']) && substr($content, 0, 5) == '<?php')
 {
 	header('Content-type: text/html');
 	echo '<!DOCTYPE html>
