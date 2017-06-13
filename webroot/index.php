@@ -15,6 +15,7 @@ define('CONFIG', '../config.php');
 define('TPLDIR','../tpl/');
 
 $base = dirname($_SERVER['SCRIPT_NAME']);
+$base = str_replace("\\","/",$base);
 if( $base != '/' )
 {
 	$base .= '/';
@@ -33,10 +34,14 @@ $allowed_image_types = array(
 
 function do_cleanup()
 {
-	global $dbh;
+	global $dbh, $config;
 	
-	$stmt = $dbh->prepare("DELETE FROM `pastes` WHERE `expires` < NOW()");
-	$stmt->execute();
+	if($config['daba_type'] == "mysql") {
+		$stmt = $dbh->prepare("DELETE FROM `pastes` WHERE `expires` < NOW()");
+		$stmt->execute();
+	}elseif($config['daba_type'] == "sqlsrv"){
+		sqlsrv_query($dbh, "DELETE FROM pastes WHERE expires < GETDATE()");
+	}
 }
 
 function check_setup()
@@ -91,22 +96,37 @@ function check_setup()
 
 function show_post( $ident )
 {
-	global $dbh;
+	global $dbh, $config;
+	
+	$hasrows = false;
+	
+	if($config['daba_type'] == "mysql") {
+		$stmt = $dbh->prepare("SELECT `text`,`mimetype` FROM `pastes` WHERE `ident` = ?");
+		if( !$stmt )
+		{
+			die( 'mysql error' );
+		}
 
-	$stmt = $dbh->prepare("SELECT `text`,`mimetype` FROM `pastes` WHERE `ident` = ?");
-	if( !$stmt )
-	{
-		die( 'mysql error' );
+		$stmt->bind_param('s', $ident );
+		$stmt->execute();
+		$stmt->store_result();
+		$stmt->bind_result( $content, $mime_type );
+		if( $stmt->num_rows == 1 ) {
+			$hasrows = true;
+			$stmt->fetch();
+		}
+	}elseif($config['daba_type'] == "sqlsrv") {
+		$stmt = sqlsrv_query($dbh, "SELECT text,mimetype FROM pastes WHERE ident = ?", array($ident));
+		$record = sqlsrv_fetch_array($stmt);
+		$content = base64_decode($record['text']);
+		$mime_type = $record['mimetype'];
+		if( sqlsrv_has_rows($stmt)) {
+			$hasrows = true;
+		}
 	}
-
-	$stmt->bind_param('s', $ident );
-	$stmt->execute();
-	$stmt->store_result();
-	$stmt->bind_result( $content, $mime_type );
     
-	if( $stmt->num_rows == 1 )
+	if($hasrows)
 	{
-		$stmt->fetch();
         // make sure we don't put newlines in headers
         $mime_type = str_replace("\n", '', $mime_type );
 
@@ -224,9 +244,14 @@ function do_paste()
 
 	// it's OK now, let's post it
 	$ident = generate_ident();
-	$stmt = $dbh->prepare("INSERT INTO `pastes` SET `ident`= ?, `ip`=?, `date`=NOW(), `text`=?, `mimetype`=?, `expires` = TIMESTAMPADD( SECOND, ?, NOW())");
-	$stmt->bind_param('ssssi', $ident, $_SERVER['REMOTE_ADDR'], $_POST['content'], $mime_type, $ttl );
-	$stmt->execute();
+	if($config['daba_type'] == "mysql") {
+		$stmt = $dbh->prepare("INSERT INTO `pastes` SET `ident`= ?, `ip`=?, `date`=NOW(), `text`=?, `mimetype`=?, `expires` = TIMESTAMPADD( SECOND, ?, NOW())");
+		$stmt->bind_param('ssssi', $ident, $_SERVER['REMOTE_ADDR'], $_POST['content'], $mime_type, $ttl );
+		$stmt->execute();
+	}elseif($config['daba_type'] == "sqlsrv"){
+		sqlsrv_query($dbh, "INSERT INTO pastes (ident,ip,date,text,mimetype,expires) VALUES (?,?,GETDATE(),?,?,DATEADD( SECOND, ?, GETDATE()))",
+			array($ident, $_SERVER['REMOTE_ADDR'], base64_encode($_POST['content']), $mime_type, $ttl));
+	}
     
 	header("Location: ".BASEURL."p/".$ident);
 
@@ -246,11 +271,16 @@ function generate_ident()
         $ident = substr( base64_encode( sha1 ( rand(0,10000000000) . $config['mysql_pass'], true ) ) , 0, 24 );
         $ident = str_replace( '+', 'A', $ident );
         $ident = str_replace( '/', 'B', $ident );
-		$stmt = $dbh->prepare("SELECT EXISTS ( SELECT * FROM `pastes` WHERE `ident` = ? )");
-		$stmt->bind_param('s', $ident );
-		$stmt->execute();
-		$stmt->bind_result( $_exists );
-		$exists = ( $_exists == 1 ? true : false );
+		if($config['daba_type'] == "mysql") {
+			$stmt = $dbh->prepare("SELECT EXISTS ( SELECT * FROM `pastes` WHERE `ident` = ? )");
+			$stmt->bind_param('s', $ident );
+			$stmt->execute();
+			$stmt->bind_result( $_exists );
+			$exists = ( $_exists == 1 ? true : false );
+		}elseif($config['daba_type'] == "sqlsrv"){
+			$stmt = sqlsrv_query($dbh, "SELECT EXISTS ( SELECT * FROM pastes WHERE ident = ? )", array($ident));
+			$exists = sqlsrv_has_rows ( $stmt );
+		}
 	}
 	return $ident;
 }
@@ -270,32 +300,51 @@ function limit_exceeded()
 
 function _limit_exceeded( $type, $limit )
 {
-	global $dbh;
+	global $dbh, $config;
 
 	if( !in_array( $type, array('DAY', 'HOUR')))
 		return true;
 
-	$stmt = $dbh->prepare("SELECT COUNT(*) FROM `pastes` WHERE `ip`= ? AND TIMESTAMPDIFF( $type, NOW(), `date` ) <= 1");
-	if( !$stmt )
-	{
-		die("Couldn't perform throttle check");
+	if($config['daba_type'] == "mysql") {
+		$stmt = $dbh->prepare("SELECT COUNT(*) FROM `pastes` WHERE `ip`= ? AND TIMESTAMPDIFF( $type, NOW(), `date` ) <= 1");
+		if( !$stmt )
+		{
+			die("Couldn't perform throttle check");
+		}
+		$stmt->bind_param("s", $_SERVER['REMOTE_ADDR'] );
+		$stmt->execute();
+		$stmt->bind_result( $count );
+		$stmt->fetch();
+	}elseif($config['daba_type'] == "sqlsrv"){
+		$stmt = sqlsrv_query($dbh, "SELECT COUNT(*) as row_count FROM pastes WHERE ip = ? AND DATEDIFF( $type, GETDATE(), date ) <= 1", array($_SERVER['REMOTE_ADDR']));
+		if( !$stmt )
+		{
+			die("Couldn't perform throttle check");
+		}
+		$record = sqlsrv_fetch_array($stmt);
+		$count = $record['row_count'];
 	}
-	$stmt->bind_param("s", $_SERVER['REMOTE_ADDR'] );
-	$stmt->execute();
-	$stmt->bind_result( $count );
-	$stmt->fetch();
-
 	return( $count > $limit );
 }
 
 check_setup();
 
-$dbh = mysqli_connect( 
-	$config['mysql_host'],
-	$config['mysql_user'],
-	$config['mysql_pass'],
-	$config['mysql_db']
-);
+if($config['daba_type'] == "mysql") {
+	$dbh = mysqli_connect( 
+		$config['daba_host'],
+		$config['daba_user'],
+		$config['daba_pass'],
+		$config['daba_db']
+	);
+}elseif($config['daba_type'] == "sqlsrv") {
+	$connectionInfo = array( "Database"=>$config['daba_db'], "UID"=>$config['daba_user'], "PWD"=>$config['daba_pass']);
+	$dbh = sqlsrv_connect( $config['daba_host'], $connectionInfo);
+}else{
+	die("Database type not supported");
+}
+
+
+
 
 if( !$dbh )
 {

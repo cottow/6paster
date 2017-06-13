@@ -1,10 +1,11 @@
 <?php
 $config['page_title'] = '6paster';
 
-$config['mysql_host'] = 'localhost';
-$config['mysql_user'] = 'paster';
-$config['mysql_pass'] = 'samplepass';
-$config['mysql_db']   = 'paste';
+$config['daba_host']  = 'localhost';
+$config['mdaba_user'] = 'paster';
+$config['mdaba_pass'] = 'samplepass';
+$config['daba_db']    = 'paste';
+$config['daba_type']  = 'mysql'; // mysql - sqlsrv
 
 $config['limit_hour']   = 60;           // throttle pastes per hour
 $config['limit_day']    = 100;          // throttle pastes per day
