@@ -2,8 +2,8 @@
 $config['page_title'] = '6paster';
 
 $config['daba_host']  = 'localhost';
-$config['mdaba_user'] = 'paster';
-$config['mdaba_pass'] = 'samplepass';
+$config['daba_user'] = 'paster';
+$config['daba_pass'] = 'samplepass';
 $config['daba_db']    = 'paste';
 $config['daba_type']  = 'mysql'; // mysql - sqlsrv
 
