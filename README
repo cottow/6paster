@@ -30,10 +30,11 @@ The oneliner for in your .bash_profile:
 
 INSTALL
 
-Copy the stuff in webroot/ to the webroot (don't forget the .htaccess)
+Copy the stuff in webroot/ to the webroot (don't forget the .htaccess for Apache or web.config for Microsoft IIS)
 and the config.php and tlp dir to the dir above the webroot.
 
 Update config.php to reflect your settings.
 
-Import db.sql into a mysql database.
+Import db.mysql.sql into a mysql database, or import db.sqlsrv.sql into a Microsoft SQL Server database.
 
+There are rewrite rules preconfigured for Microsoft IIS Rewrite (obtainable via Microsoft Web Platform Installer).
