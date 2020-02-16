@@ -225,7 +225,7 @@ function do_paste()
 	// it's OK now, let's post it
 	$ident = generate_ident();
 	$stmt = $dbh->prepare("INSERT INTO `pastes` SET `ident`= ?, `ip`=?, `date`=NOW(), `text`=?, `mimetype`=?, `expires` = TIMESTAMPADD( SECOND, ?, NOW())");
-    $ip = hash('sha256',$_SERVER['REMOTE_ADDR']);
+        $ip = hash('sha256',$_SERVER['REMOTE_ADDR']);
 	$stmt->bind_param('ssssi', $ident, $ip, $_POST['content'], $mime_type, $ttl );
 	$stmt->execute();
     
@@ -281,7 +281,7 @@ function _limit_exceeded( $type, $limit )
 	{
 		die("Couldn't perform throttle check");
 	}
-    $ip = hash('sha256',$_SERVER['REMOTE_ADDR']);
+        $ip = hash('sha256',$_SERVER['REMOTE_ADDR']);
 	$stmt->bind_param("s", $ip);
 	$stmt->execute();
 	$stmt->bind_result( $count );
