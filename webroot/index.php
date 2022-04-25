@@ -43,18 +43,6 @@ function check_setup()
 {
 	global $config;
 
-	// check register_globals
-	if( ini_get('register_globals') )
-	{
-		die('register_globals is enabled. I can\'t work like this.');
-	}
-
-	// check gpc_quotes
-	if( get_magic_quotes_gpc() )
-	{
-		die('magic_quotes_gpc is enabled. I can\'t work like this.');
-	}
-
 	// check SSL
 	if( !array_key_exists('HTTPS', $_SERVER) || $_SERVER['HTTPS'] != "on")
 	{
